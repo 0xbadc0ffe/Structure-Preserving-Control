@@ -1,5 +1,5 @@
 # Structure-Preserving-Control
-Optimal control of a Wheeled Inverted Pendulum discretized via Variational Integrator technique.
+Constrained optimal control of a Wheeled Inverted Pendulum discretized via Lie Group Variational Integration.
 
 
 
