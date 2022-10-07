@@ -1,2 +1,2 @@
 # Structure-Preserving-Control
-Variational Inegrator for control of underactuated robot
+Optimal control of Wheeled Inverted Pendulum discretized via Variational Integrator method.
