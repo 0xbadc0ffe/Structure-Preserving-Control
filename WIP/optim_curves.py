@@ -66,14 +66,6 @@ def varIntWIP(t, q, u=None, stop_on_complex_root=False):
 
     A = np.matrix([[0, -rw, -rw],[0,0,0],[0,rw/dw,-rw/dw]])
 
-    V = np.matrix([[0,-vk[0], vk[1]], [vk[0], 0, vk[2]], [0,0,0]])
-    #gk_next = (gk.T@expm(-h*A@V)).T
-
-    # G = np.matrix([[np.cos(gk[2]), -np.sin(gk[2]), gk[0]], [np.sin(gk[2]), np.cos(gk[2]), gk[1]], [0,0,1]])
-    # G_n = G@expm(-h*A@V)
-    # gk_next = trasp(np.array([G_n[0,2],G_n[1,2], np.arccos(G_n[0,0])]).flatten())
-
-
     Av = A@vk
     Avm = np.matrix([[0,-Av[2], Av[0]], [Av[2], 0, Av[1]], [0,0,0]])
     G = np.matrix([[np.cos(gk[2]), -np.sin(gk[2]), gk[0]], [np.sin(gk[2]), np.cos(gk[2]), gk[1]], [0,0,1]])
@@ -86,26 +78,7 @@ def varIntWIP(t, q, u=None, stop_on_complex_root=False):
 
     I_th = 2*IWzz + IBzz*np.cos(sk[0])**2 + 2*mw*dw*2 + (IBxx + mb*b**2)*np.sin(sk[0])**2
     I_th_next = 2*IWzz + IBzz*np.cos(sk_next[0])**2 + 2*mw*dw*2 + (IBxx + mb*b**2)*np.sin(sk_next[0])**2
-
-    # C1 = rw**2/(2*dw**2)*(IBxx-IBzz + mb*b**2)*np.sin(2*sk[0])*(vk[1]-vk[2])**2 
-    # C1 += - mb*b*rw*np.sin(sk[0])*vk[0]*(vk[2] + vk[1]) + mb*b*gravity*np.sin(sk[0])
-    # C = np.matrix([C1,0,0]).T
     
-    # K = rw**2*((mb + 2*mw) - I_th/(2*dw**2))
-    # H = rw**2*((mb + 2*mw) + I_th/(2*dw**2))
-
-    # M1 = np.matrix([mb*b**2+IByy, mb*b*rw*np.cos(sk[0]), mb*b*rw*np.cos(sk[0])])
-    # M2 = np.matrix([mb*b*rw*np.cos(sk[0]), H + IWyy, K])
-    # M3 = np.matrix([mb*b*rw*np.cos(sk[0]), K, H + IWyy])
-    # M = np.matrix([M1, M2, M3])
-
-
-    # M1 = np.matrix([mb*b**2+IByy, mb*b*rw*np.cos(sk_next[0]), mb*b*rw*np.cos(sk_next[0])])
-    # M2 = np.matrix([mb*b*rw*np.cos(sk_next[0]), H + IWyy, K])
-    # M3 = np.matrix([mb*b*rw*np.cos(sk_next[0]), K, H + IWyy])
-    # M_next = np.matrix([M1, M2, M3])
-    
-
     betak = mb*rw*b*np.cos(sk[0])
     betak_next = mb*rw*b*np.cos(sk_next[0])
 
@@ -134,26 +107,18 @@ def varIntWIP(t, q, u=None, stop_on_complex_root=False):
     rho = omega - 2*psik_next*betak_next/delta + h*sigmak_next*ni
     mu = Z + h*u[0] - psik_next*ni + h*C0 
 
-    #print("quadratic eq")
-    #print(lambd, rho, mu)
-
     if lambd != 0:
 
         if rho**2 < -4*mu*lambd:
-            #print("HEY, complex roots!?")
-            #print(rho**2 + 4*mu*lambd)
             v_alpha_next = vk[0]
-            #v_alpha_next = -rho/(2*lambd)
-            #v_alpha_next =  (-rho + np.sqrt(np.abs(rho**2 + 4*mu*lambd)))/(2*lambd)
-            
+
             if stop_on_complex_root:
                 print("HEY, complex roots!?")
                 print(rho**2 + 4*mu*lambd)
                 raise Exception("complex roots encountered")
         else:
             v_alpha_next = (-rho + np.sqrt(rho**2 + 4*mu*lambd))/(2*lambd)
-            v_alpha_next_alt = (-rho - np.sqrt(rho**2 + 4*mu*lambd))/(2*lambd)
-            #print(v_alpha_next, v_alpha_next_alt)
+            v_alpha_next_alt = (-rho - np.sqrt(rho**2 + 4*mu*lambd))/(2*lambd)     
 
 
     elif rho != 0:
@@ -168,12 +133,7 @@ def varIntWIP(t, q, u=None, stop_on_complex_root=False):
 
     vk_next = [v_alpha_next, v_phi1_next, v_phi2_next]
 
-    #gk_next = [gk_next[0] + gk[0]*np.cos(gk_next[2]) - gk[1]*np.sin(gk_next[2]), gk_next[1] + gk[0]*np.sin(gk_next[2]) + gk[1]*np.cos(gk_next[2]), gk_next[2]]
-
     qnext = np.asfarray([gk_next, sk_next, vk_next])
-
-    #print(qnext)
-    #input()
 
     return flat(qnext)
 
